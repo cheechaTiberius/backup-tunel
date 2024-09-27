@@ -22,7 +22,7 @@
     .PARAMETER Password
     Password za wbadmin. Default: Secret po imenu Password iz defaultnog Vaulta.
     .PARAMETER BezKomprimiranja
-
+    .PARAMETER BezMaila
     .EXAMPLE
     .\Pokreni-backup.ps1 -Computer server1,server2 -BackupPath \\bkp\system
     .NOTES
@@ -51,7 +51,8 @@ param (
     $LocalBackupKomprimiraniPath = "E:\OS-Backup\Komprimirani35",
     $User = "$(Get-Secret -Name Username -AsPlainText)",
     $Password = "$(Get-Secret -Name Password -AsPlainText)",
-    [switch] $BezKomprimiranja
+    [switch] $BezKomprimiranja,
+    [switch] $BezMaila
 )
 function Dodaj-log {
     param (
@@ -264,7 +265,9 @@ $MailArgs = @{
 }
 # $MailArgs
 try {
-    Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+    if (!$BezMaila) {
+        Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+    }
 } catch {
     Dodaj-log "Mail obavijest nije poslana: $_" -Severity Warning
 }
@@ -299,7 +302,9 @@ if (!$BezKomprimiranja) {
     $MailArgs.Body = "<HTML><BODY><TABLE> $($MailTable) </TABLE></BODY></HTML>"
     # $MailArgs
     try {
-        Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+        if (!$BezMaila) {
+            Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+        }
     } catch {
         Dodaj-log "Mail obavijest nije poslana: $_" -Severity Warning
     }

@@ -70,3 +70,4 @@ Lista želja:
 - [x] dodano brisanje starih backup logova
 - [x] dodan Path za logove
 - [x] dodati bilješku za retry backupa
+- [x] dodati opciju izvršavanja bez slanja maila
