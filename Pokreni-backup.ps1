@@ -150,7 +150,7 @@ $localName = $Env:COMPUTERNAME
 $LocalServer = $null
 $PopisServera="Popis servera:"
 $SviServeri | ForEach-Object {
-    if ($null -ne $_) {
+    if ("" -ne $_) {
         $PopisServera += " $($_)"
         # Provjeri je li localhost u popisu
         if ($_ -eq $localName) {
@@ -169,7 +169,7 @@ if ($LocalServer) {
         Dodaj-log "Stari backup ne postoji"
     } else {
         try {
-            if($null -ne $LocalServer) {
+            if("" -ne $LocalServer) {
                 Remove-Item -Path $ServerBackupPath -Recurse -Force -ErrorAction Stop
                 Dodaj-log "Obrisan $($ServerBackupPath)"
             }
@@ -229,7 +229,7 @@ $serveri | ForEach-Object {
         Dodaj-log "Stari backup ne postoji"
     } else {
         try {
-            if ($null -ne $server) {
+            if ("" -ne $server) {
                 Remove-Item -Path $ServerBackupPath -Recurse -Force -ErrorAction Stop
                 Dodaj-log "Obrisan $($ServerBackupPath)"                
             }
