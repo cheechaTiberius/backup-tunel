@@ -115,9 +115,6 @@ if ($Vault) {
     $Password = [System.Net.NetworkCredential]::new("", $Credential.Password).Password 
 }
 
-Write-Debug "Username: $($User)"
-Write-Debug "Password: $($Password)"
-
 Dodaj-log "--------------------------------------------------------------------------------"
 
 $serveri = @()
