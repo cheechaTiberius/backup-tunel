@@ -17,14 +17,14 @@
     Lokalni path za backupove, ista lokacija na kojoj je share.
     .PARAMETER LocalBackupKomprimiraniPath
     Lokalni path za komprimiranje backupova.
-    .PARAMETER User
-    Username za wbadmin. Default: Secret po imenu Username iz defaultnog Vaulta.
-    .PARAMETER Password
-    Password za wbadmin. Default: Secret po imenu Password iz defaultnog Vaulta.
+    .PARAMETER Credential
+    Credential objekt - User/Pass sa pravima za wbadmin. Get-Credential za interaktivni upis
     .PARAMETER BezKomprimiranja
     .PARAMETER BezMaila
     .EXAMPLE
     .\Pokreni-backup.ps1 -Computer server1,server2 -BackupPath \\bkp\system
+    .EXAMPLE
+    .\Pokreni-backup.ps1 -Computer Server -Credential (Get-Credential)
     .NOTES
     wbadmin parametri:
         wbadmin START BACKUP -backuptarget:$($using:BackupPath) -include:C: -exclude:c:\temp\* -allCritical -noVerify -quiet -user:$($using:User) -password:$($Using:Password)
@@ -49,8 +49,7 @@ param (
     $LogPath = "C:\Scripts\BackupSve\BackupLogs",
     $LocalBackupPath = "E:\OS-Backup\Temp",
     $LocalBackupKomprimiraniPath = "E:\OS-Backup\Komprimirani35",
-    $User = "$(Get-Secret -Name Username -AsPlainText)",
-    $Password = "$(Get-Secret -Name Password -AsPlainText)",
+    [pscredential] $Credential,
     [switch] $BezKomprimiranja,
     [switch] $BezMaila
 )
@@ -96,6 +95,18 @@ function Pokreni-backup {
 
 Write-Debug "Log filename: $($Log)"
 Write-Debug "Backup path $($BackupPath)"
+
+# credentials
+if ($Credential) {
+    $User = $Credential.UserName
+    $Password = [System.Net.NetworkCredential]::new("", $Credential.Password).Password
+} else {
+    $User = "$(Get-Secret -Name Username -AsPlainText)"
+    $Password = "$(Get-Secret -Name Password -AsPlainText)"
+}
+Write-Debug "Username: $($User)"
+Write-Debug "Password: $($Password)"
+
 Dodaj-log "--------------------------------------------------------------------------------"
 
 $serveri = @()
