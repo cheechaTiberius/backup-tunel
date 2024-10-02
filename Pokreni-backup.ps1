@@ -255,21 +255,21 @@ $RetryServeri | ForEach-Object {
     }
 }
 # pošalji mail izvjestaj
-$MailArgs = @{
-    From = "$(Get-Secret -name E-MailUsername -AsPlainText)"
-    To = 'tibor@laszlo.com.hr','dj@meridijana.hr','zeljko.medic@outlook.com'
-    Subject = 'Tunel Ucka Backup'
-    Body = "<HTML><BODY><TABLE> $($MailTable) </TABLE></BODY></HTML>"
-    SmtpServer = "$(Get-Secret -name E-MailServer -AsPlainText)"
-    Credential = New-Object System.Management.Automation.PSCredential ((Get-Secret -name E-MailUsername -AsPlainText),(Get-Secret -name E-MailPassword))
-}
-# $MailArgs
-try {
-    if (!$BezMaila) {
-        Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+if (!$BezMaila) {
+    $MailArgs = @{
+        From = "$(Get-Secret -name E-MailUsername -AsPlainText)"
+        To = 'tibor@laszlo.com.hr','dj@meridijana.hr','zeljko.medic@outlook.com'
+        Subject = 'Tunel Ucka Backup'
+        Body = "<HTML><BODY><TABLE> $($MailTable) </TABLE></BODY></HTML>"
+        SmtpServer = "$(Get-Secret -name E-MailServer -AsPlainText)"
+        Credential = New-Object System.Management.Automation.PSCredential ((Get-Secret -name E-MailUsername -AsPlainText),(Get-Secret -name E-MailPassword))
     }
-} catch {
-    Dodaj-log "Mail obavijest nije poslana: $_" -Severity Warning
+    # $MailArgs
+    try {
+        Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+    } catch {
+        Dodaj-log "Mail obavijest nije poslana: $_" -Severity Warning
+    }
 }
 
 
@@ -298,15 +298,15 @@ if (!$BezKomprimiranja) {
         
     }
     # posalji mail izvjestaj
-    $MailArgs.Subject = "Tunel Ucka komprimiranje backupa"
-    $MailArgs.Body = "<HTML><BODY><TABLE> $($MailTable) </TABLE></BODY></HTML>"
-    # $MailArgs
-    try {
-        if (!$BezMaila) {
+    if (!$BezMaila) {
+        $MailArgs.Subject = "Tunel Ucka komprimiranje backupa"
+        $MailArgs.Body = "<HTML><BODY><TABLE> $($MailTable) </TABLE></BODY></HTML>"
+        # $MailArgs
+        try {
             Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+        } catch {
+            Dodaj-log "Mail obavijest nije poslana: $_" -Severity Warning
         }
-    } catch {
-        Dodaj-log "Mail obavijest nije poslana: $_" -Severity Warning
     }
 
     # Pocisti logove starije od 40 dana
