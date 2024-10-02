@@ -169,7 +169,7 @@ if ($LocalServer) {
         Dodaj-log "Stari backup ne postoji"
     } else {
         try {
-            if("" -ne $LocalServer) {
+            if($ServerBackupPath -ne "$($BackupPath)\WindowsImageBackup\") {
                 Remove-Item -Path $ServerBackupPath -Recurse -Force -ErrorAction Stop
                 Dodaj-log "Obrisan $($ServerBackupPath)"
             }
@@ -229,7 +229,7 @@ $serveri | ForEach-Object {
         Dodaj-log "Stari backup ne postoji"
     } else {
         try {
-            if ("" -ne $server) {
+            if ($ServerBackupPath -ne "$($BackupPath)\WindowsImageBackup\") {
                 Remove-Item -Path $ServerBackupPath -Recurse -Force -ErrorAction Stop
                 Dodaj-log "Obrisan $($ServerBackupPath)"                
             }
