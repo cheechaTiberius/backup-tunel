@@ -20,7 +20,11 @@
     .PARAMETER Credential
     Credential objekt - User/Pass sa pravima za wbadmin. Get-Credential za interaktivni upis
     .PARAMETER BezKomprimiranja
+    Bez pokretanja komprimiranja
     .PARAMETER BezMaila
+    Bez slanja maila
+    .PARAMETER Vault
+    wbadmin credentiali iz defaultnog vaulta, ignorira zadani credential objekt
     .EXAMPLE
     .\Pokreni-backup.ps1 -Computer server1,server2 -BackupPath \\bkp\system
     .EXAMPLE
@@ -51,7 +55,8 @@ param (
     $LocalBackupKomprimiraniPath = "E:\OS-Backup\Komprimirani35",
     [pscredential] $Credential,
     [switch] $BezKomprimiranja,
-    [switch] $BezMaila
+    [switch] $BezMaila,
+    [switch] $Vault
 )
 function Dodaj-log {
     param (
@@ -97,13 +102,19 @@ Write-Debug "Log filename: $($Log)"
 Write-Debug "Backup path $($BackupPath)"
 
 # credentials
-if ($Credential) {
-    $User = $Credential.UserName
-    $Password = [System.Net.NetworkCredential]::new("", $Credential.Password).Password
-} else {
+if ($Vault) {
     $User = "$(Get-Secret -Name Username -AsPlainText)"
-    $Password = "$(Get-Secret -Name Password -AsPlainText)"
+    $Password = "$(Get-Secret -Name Password -AsPlainText)"    
+} elseif ($Credential) {
+    $User = $Credential.UserName
+    $Password = [System.Net.NetworkCredential]::new("", $Credential.Password).Password    
+} elseif (!$Credential -and !$Vault) {
+    Write-Debug ("Nije naveden niti credential objekt niti vault")
+    $Credential = Get-Credential
+    $User = $Credential.UserName
+    $Password = [System.Net.NetworkCredential]::new("", $Credential.Password).Password 
 }
+
 Write-Debug "Username: $($User)"
 Write-Debug "Password: $($Password)"
 
@@ -277,7 +288,7 @@ if (!$BezMaila) {
     }
     # $MailArgs
     try {
-        Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+        Send-MailMessage @MailArgs -Port 587 -BodyAsHtml -ErrorAction Stop
     } catch {
         Dodaj-log "Mail obavijest nije poslana: $_" -Severity Warning
     }
@@ -314,7 +325,7 @@ if (!$BezKomprimiranja) {
         $MailArgs.Body = "<HTML><BODY><TABLE> $($MailTable) </TABLE></BODY></HTML>"
         # $MailArgs
         try {
-            Send-MailMessage @MailArgs -BodyAsHtml -ErrorAction Stop
+            Send-MailMessage @MailArgs -Port 587 -BodyAsHtml -ErrorAction Stop
         } catch {
             Dodaj-log "Mail obavijest nije poslana: $_" -Severity Warning
         }
