@@ -150,13 +150,15 @@ $localName = $Env:COMPUTERNAME
 $LocalServer = $null
 $PopisServera="Popis servera:"
 $SviServeri | ForEach-Object {
-    $PopisServera += " $($_)"
-    # Provjeri je li localhost u popisu
-    if ($_ -eq $localName) {
-        Write-Debug "$_ je lokalni server"
-        $LocalServer += $_
-    } else {
-        $serveri += $_
+    if ($null -ne $_) {
+        $PopisServera += " $($_)"
+        # Provjeri je li localhost u popisu
+        if ($_ -eq $localName) {
+            Write-Debug "$_ je lokalni server"
+            $LocalServer += $_
+        } else {
+            $serveri += $_
+        }
     }
 }
 Dodaj-log $PopisServera
@@ -167,8 +169,10 @@ if ($LocalServer) {
         Dodaj-log "Stari backup ne postoji"
     } else {
         try {
-            Remove-Item -Path $ServerBackupPath -Recurse -Force -ErrorAction Stop
-            Dodaj-log "Obrisan $($ServerBackupPath)"
+            if($null -ne $LocalServer) {
+                Remove-Item -Path $ServerBackupPath -Recurse -Force -ErrorAction Stop
+                Dodaj-log "Obrisan $($ServerBackupPath)"
+            }
         } catch {
             Dodaj-log "WARNING: Brisanje starog backupa nije uspjelo" -Severity Warning
         }
@@ -225,8 +229,10 @@ $serveri | ForEach-Object {
         Dodaj-log "Stari backup ne postoji"
     } else {
         try {
-            Remove-Item -Path $ServerBackupPath -Recurse -Force -ErrorAction Stop
-            Dodaj-log "Obrisan $($ServerBackupPath)"
+            if ($null -ne $server) {
+                Remove-Item -Path $ServerBackupPath -Recurse -Force -ErrorAction Stop
+                Dodaj-log "Obrisan $($ServerBackupPath)"                
+            }
         } catch {
             Dodaj-log "WARNING: Brisanje starog backupa nije uspjelo" -Severity Warning
         }
