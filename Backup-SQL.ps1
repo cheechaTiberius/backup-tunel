@@ -50,15 +50,20 @@ function Pokreni-backup {
     } catch {
         Dodaj-log "ERROR: Pokretanje backupa nije uspjelo" -Severity Error
     }
+    # TODO return Get-WBjob statur
 }
 
 # TODO inicijalizacija reporta i retry spiska
+$retry = @()
 
 # TODO pokreni backup za prvi server
-
-    # TODO provjeri status
-
+$BackupResult = Pokreni-backup -Server TestServer1
+# TODO provjeri status
+if ($BackupResult -ne 0) {
     # TODO ako backup nije uspio dodaj u retry
+    $retry += 'TestServer1'
+}
+    
 
 # TODO pokreni backup za drugi server
 
