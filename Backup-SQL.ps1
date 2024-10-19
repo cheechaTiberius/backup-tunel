@@ -1,10 +1,8 @@
-# TODO dodati HTML redove u report
-
 # konfiguracija
 $BackupPath = "\\Backup\Temp$"
 $Log="SQLBackupLog-$((Get-date).ToString("yyyyMMdd")).log"
 $LogPath = "C:\Scripts\BackupSQL\BackupLogs"
-$LocalBackupPath = "E:\OS-Backup\Temp"
+# $LocalBackupPath = "E:\OS-Backup\Temp"
 
 $User = "$(Get-Secret -Name Username -AsPlainText)"
 $Password = "$(Get-Secret -Name Password -AsPlainText)" 
