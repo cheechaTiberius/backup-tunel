@@ -1,3 +1,19 @@
+<#
+    .SYNOPSIS
+    Postupak:
+        1. na svakom serveru (jedan po jedan)
+            - obriši stari backup ako postoji
+            - pokreni backup
+        2. nakon što svi serveri prođu backup job:
+            - provjeri prošli job je li prošao
+            - ako nije ponovi
+            
+    Podesiti:
+        - $BackupPath, $Log i $LogPath
+        - dodati sve servere u $Serveri
+        - provjeriti wbadmin komandu (linija 65)
+#>
+
 # konfiguracija
 $BackupPath = "\\Backup\Temp$"
 $Log="SQLBackupLog-$((Get-date).ToString("yyyyMMdd")).log"
