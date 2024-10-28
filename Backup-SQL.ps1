@@ -65,7 +65,7 @@ function Pokreni-backup {
     $ServerBackupPath = Get-ChildItem -path "E:\temp\WindowsImageBackup\"
     $ServerBackupPath | ForEach-Object {
         Remove-Item -path $_ -Recurse -Force -WhatIf
-        Dodaj-log "Obrisan $($ServerBackupPath)"
+        Dodaj-log "Obrisan $($_)"
     }
     # pokreni novi backup
     try {
