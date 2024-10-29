@@ -62,9 +62,9 @@ function Pokreni-backup {
         $Server
     )
     # obrisi stari backup ako postoji i nije root
-    $ServerBackupPath = Get-ChildItem -path "E:\temp\WindowsImageBackup\"
+    $ServerBackupPath = Get-ChildItem -Path "$($BackupPath)\WindowsImageBackup\"
     $ServerBackupPath | ForEach-Object {
-        Remove-Item -path $_ -Recurse -Force -WhatIf
+        Remove-Item -Path $_ -Recurse -Force -WhatIf
         Dodaj-log "Obrisan $($_)"
     }
     # pokreni novi backup
