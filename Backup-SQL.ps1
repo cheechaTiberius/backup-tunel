@@ -64,8 +64,9 @@ function Pokreni-backup {
     # obrisi stari backup ako postoji i nije root
     $ServerBackupPath = Get-ChildItem -Path "$($BackupPath)\WindowsImageBackup\"
     $ServerBackupPath | ForEach-Object {
-        Remove-Item -Path $_ -Recurse -Force -WhatIf
-        Dodaj-log "Obrisan $($_)"
+        Write-Debug "$($_.FullName)"
+        Remove-Item -Path $_.FullName -Recurse -Force
+        Dodaj-log "Obrisan $($_.FullName)"
     }
     # pokreni novi backup
     try {
@@ -92,12 +93,12 @@ function Provjeri-Backup {
         Dodaj-log -LogEntry "Nije moguće provjeriti status prethodnog backupa" -Severity Error
     }
     # provjeri status nakon zavrsetka
-    if ($output.HResult -ne 0) {
-        # $retry += 'TestServer1'
-        Dodaj-log -LogEntry "Backup $($Server) nije uspio" -Severity Warning
-    } else {
-        Dodaj-log -LogEntry "Backup $($Server) uspio"
-    }
+    # if ($output.HResult -ne 0) {
+    #     # $retry += 'TestServer1'
+    #     Dodaj-log -LogEntry "Backup $($Server) nije uspio" -Severity Warning
+    # } else {
+    #     Dodaj-log -LogEntry "Backup $($Server) uspio"
+    # }
     return $output.HResult
 }
 
